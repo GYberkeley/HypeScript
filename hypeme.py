@@ -27,6 +27,7 @@ from bs4 import BeautifulSoup
 import json
 import string
 import os
+import eyed3
 
 ##############AREA_TO_SCRAPE################
 # This is the general area that you'd 
@@ -146,6 +147,8 @@ class HypeScraper:
           mp3_song_file = open(filename, "wb")
           mp3_song_file.write(download_response.read() )
           mp3_song_file.close()
+
+          edit_metadata(filename, artist, title)
       except urllib2.HTTPError, e:
             print 'HTTPError = ' + str(e.code) + " trying hypem download url."
       except urllib2.URLError, e:
@@ -153,7 +156,12 @@ class HypeScraper:
       except Exception, e:
             print 'generic exception: ' + str(e)
       
-  
+def edit_metadata(filename, artist, title):
+  song = eyed3.load(filename)
+  song.initTag()
+  song.tag.artist = unicode(artist, "utf-8")
+  song.tag.title = unicode(title, "utf-8")
+  song.tag.save()
      
 
 def main():
